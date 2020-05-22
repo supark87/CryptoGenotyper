@@ -4,14 +4,12 @@ LABEL stage=intermediate
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y git
-#RUN mkdir /lpsubpclones && cd /lpsubpclones && git clone https://github.com/supark87/lpsubp.git 
-RUN git clone https://github.com/supark87/lpsubp.git 
+RUN git clone https://github.com/supark87/CryptoGenotyper.git 
 
 FROM ubuntu:18.04
-COPY --from=intermediate /lpsubp/ /data/
+COPY --from=intermediate /CryptoGenotyper/ /data/
 WORKDIR /data/
-#RUN git clone https://github.com/supark87/lpsubp.git
-#COPY . /data/
+
 RUN apt-get update && apt-get install -y ncbi-blast+=2.6.0-1
 RUN apt-get update && apt-get install -y muscle
 RUN apt-get update && apt-get install -y --no-install-recommends \
