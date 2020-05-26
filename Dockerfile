@@ -24,7 +24,7 @@ RUN pip3 install biopython
 RUN pip3 install wheel
 RUN pip3 install ipython
 RUN pip3 install hdbscan==0.8.13
-RUN pip3 install -r /data/requirements1.txt
+RUN pip3 install -r /data/requirements.txt
 
 #CMD ["python3", "/data/pipe.py","/data/test2/"]
 
