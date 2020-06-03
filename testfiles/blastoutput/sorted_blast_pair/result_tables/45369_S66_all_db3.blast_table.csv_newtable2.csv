@@ -1,0 +1,4 @@
+,Genome,testgenome_gene_name,db_gene_name,pident,slength,coverage,querystart,queryend,db,score
+7,45369_S66_all_db3,NODE_243_length_6364_cov_170.232,C_PARVUM_AB513864_I_Genotype_NAN_18s,99.828,1746.0,0.9994272623138604,5.0,1750.0,18s,99.77082474226806
+4,45369_S66_all_db3,NODE_48_length_62622_cov_152.15,C_erinacei_GQ214079_isolate_IV-19_actin,99.906,1062.0,0.9990583804143126,42534.0,43595.0,actin,99.81192655367232
+0,45369_S66_all_db3,NODE_12_length_219764_cov_99.8691,C_erinacei_KC885895_isolate_YA01_hsp70,100.0,308.0,0.9967532467532468,205735.0,206042.0,hsp70,99.67532467532469
