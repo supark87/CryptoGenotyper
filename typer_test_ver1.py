@@ -197,7 +197,7 @@ def outputdirectory():
              file=os.path.join(source_dir1,file)
              shutil.copy(file,target)
 
-def sendemail():
+#def sendemail():
      base_dir=sys.argv[1]
      os.chdir(base_dir+"/outputfiles")
 
@@ -251,9 +251,9 @@ def main():
      logging.info("Result tables and final table were generated")
      outputdirectory()
      logging.info("outputdirectory is generated")
-     sendemail()
-     logging.info("results are sent by emails")
-     logging.info('Finished')
+     #sendemail()
+     #logging.info("results are sent by emails")
+     #logging.info('Finished')
 #      code13()
 #      logging.info('Outputfiles are sent to your email account')
 if __name__ == '__main__':
