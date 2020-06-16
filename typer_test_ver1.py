@@ -31,7 +31,8 @@ def RunBlast():
                  basedb=os.path.basename(database)
                  dbname=basedb.split(".")[0]
                  databasename =os.path.join(database_dir,basedb.split(".")[0])
-                 p=subprocess.Popen(["blastn","-query",query,"-db",databasename,"-evalue","1e-6","-outfmt","6 qseqid sseqid pident qlen slen qstart qend sstart send","-max_target_seqs","3","-out","./blastoutput"+"/"+filename+"_"+dbname+".blast"])
+                 p=subprocess.Popen(["blastn","-query",query,"-db",databasename,"-evalue","1e-6","-outfmt","6 qseqid sseqid pident qlen slen qstart qend sstart send sseq","-max_target_seqs","3",
+                     "-out","./blastoutput"+"/"+filename+"_"+dbname+".blast"])
                  child_processes.append(p)
                  for cp in child_processes:
                      cp.wait()
@@ -60,13 +61,13 @@ def filter():
                      qend=float(line[6])
                      sstart=float(line[7])
                      send=float(line[8])
-                    
+                     sseq=line[9]
                      if (pident> 97) & (abs(qend-qstart)/slength > 0.75)  :
                          gene[qseqid]=sseqid
                          for key in gene:
                              with open("./sorted_blast_pair" +"/"+genomename+".blast","a") as ofile:
                                   ofile.write(genomename+"\t"+key+"\t"+gene.get(key)+"\t"\
-                                      +str(pident)+"\t"+str(slength)+"\t"+str(abs(qend-qstart)/slength)+"\t"+str(qstart)+"\t"+str(qend)+"\n")
+                                      +str(pident)+"\t"+str(slength)+"\t"+str(abs(qend-qstart)/slength)+"\t"+str(qstart)+"\t"+str(qend)+"\t"+str(sseq)+"\n")
                                   ofile.close 
                  except IOError:
                      print("no input")
@@ -85,7 +86,7 @@ def generate_table():
              base=filename.split(".")
              name=base[0]
              df=pd.read_csv(filename,sep="\t",header=None)
-             df.columns=['Genome','testgenome_gene_name','db_gene_name','pident','slength','coverage','querystart','queryend']
+             df.columns=['Genome','testgenome_gene_name','db_gene_name','pident','slength','coverage','querystart','queryend','sseq']
              df['db']=df.db_gene_name.apply(lambda x:x.split("_")[-1])
              df['score']=df['pident']*df['coverage']
              #df['result']=df.sort_values(by="score",ascending=False).head(1).db_gene_name.values[0]+"_true"
@@ -197,7 +198,7 @@ def outputdirectory():
              file=os.path.join(source_dir1,file)
              shutil.copy(file,target)
 
-#def sendemail():
+def sendemail():
      base_dir=sys.argv[1]
      os.chdir(base_dir+"/outputfiles")
 
@@ -259,4 +260,105 @@ def main():
 if __name__ == '__main__':
      main()
 
+# ####GetSequence#####
 
+# os.chdir(base_dir)
+# os.system("mkdir seqrecords")
+# def Parse(filename,seqs):
+#     file = open(filename) 
+#     seqs={}
+#     name = ''
+#     for line in file:
+#         line = line.rstrip()  
+#         if line.startswith('>'):
+#             name=line.replace('>',"")
+#             seqs[name] = ''
+#         else:
+#             seqs[name] = seqs[name] + line
+            
+#     file.close
+#     return seqs
+
+# seqs={}    
+# for genome in os.listdir('.'):
+
+#      if genome.endswith(".fasta"):
+#      #if genome.endswith(".fasta"):
+#          seqs=dict(seqs,**Parse(genome,seqs))
+            
+# for file in os.listdir(base_dir+'/blastoutput/sorted_blast_pair'):
+#      #genomename=file.split("_")[2]+file.split("_")[3]
+#      genomename=file.split("_")[2]
+#      #genomename=file.split(".")[0]
+#      #genomename=genomename.split("_")[2]
+#      file=open(os.path.join(base_dir+'/blastoutput/sorted_blast_pair',file))
+#      for line in file:
+#          genename=line.split("\t")[1]+" "
+#          coregenename=line.split("\t")[0]
+#          for key in seqs:   
+#              if key.find(str(genename))!= -1: 
+#              #if key == str(genename):
+#                  with open("./seqrecords"+"/"+coregenename+"_"+genename+"_"+genomename+".fasta","w") as ofile:
+#                       ofile.write(">"+coregenename+"_"+genename+"_"+genomename+"\n"+seqs.get(key))
+#                       ofile.close()
+#      file.close()
+    
+# print("Getting sequences are done")     
+
+# os.chdir(base_dir+'/seqrecords')
+# #os.chdir(base_dir)
+# os.system('mkdir pergene_seqrecords')
+# genelist=open(os.path.join(sys.argv[1],'new_49gene.list'))
+
+# for gene in genelist: 
+#      gene=gene.rstrip()
+#      for seqrecord in os.listdir("."):
+#          if seqrecord.startswith(gene):
+#              seq=open(os.path.join(base_dir+'/seqrecords',seqrecord))
+#              #seq=open(os.path.join(base_dir,seqrecord))
+#              for seqline in seq:
+#                  seqline=seqline.rstrip()
+#                  #with open("./pergene_seqrecords/"+"/"+gene+"blast_list"+".txt","a") as pfile:
+#                  #    pfile.write(seqline+"\n")
+#                  #    pfile.close()
+#                  with open("./pergene_seqrecords"+"/"+gene+"_"+"unaligned"+".fasta","a") as pfile:
+#                       pfile.write(seqline+"\n")
+#                       pfile.close
+#              seq.close()
+# genelist.close()
+# print("Sequences are sorted by each locus")
+
+# #####PRESENCE/ABSENCE#####
+# os.chdir(base_dir)
+# filelist1=os.listdir(base_dir+"/blastoutput")
+# filelist2=os.listdir(base_dir+"/blastoutput/sorted_blast_pair")
+# sys.stdout=open('test','a')
+# for beforefile in filelist1:
+#      if beforefile.endswith(".blast"):
+#          base=beforefile.split(".")[0]
+#          coregenename=base.split("_")[0]
+#          #genomename=base.split("_")[1]+"_"+base.split("_")[2]
+#          genomename=base.split("_")[1]
+     
+     
+#          if str(filelist2).find(str(beforefile))!= -1:
+#              sys.stdout.write(coregenename+"\t"+genomename+"\t"+"yes"+"\n")      
+#          else:
+#              sys.stdout.write(coregenename+"\t"+genomename+"\t"+"no"+"\n")
+         
+# sys.stdout.close()
+
+
+# test=open("test")
+# no=open("notest",'a')
+# for line in test: 
+#      line=line.rstrip()
+#      core=line.split()[0]
+#      subject=line.split()[1]
+#      if (line.startswith("lpg")) & (line.find("no")!= -1):
+#          for blastresult in filelist1:
+#              if blastresult.startswith(core+"_"+subject):
+#                  f=open(os.path.join(base_dir+"/blastoutput",blastresult))
+#                  no.write(line+"\t"+str(f.readlines()).replace("t","").replace("n","")+"\n")
+
+# no.close()
